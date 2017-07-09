@@ -2,12 +2,13 @@
   "name": "crypto-challenge",
   "version": "0.0.1",
   "description": "http://cryptopals.com/",
-  "main": "test.js",
+  "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "node test/index.js"
+    "test": "node test/index.js",
+    "start": "node index.js"
   },
   "keywords": [
     "crypto"
