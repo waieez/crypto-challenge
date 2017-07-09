@@ -1,4 +1,5 @@
 module.exports = (() => {
-  require('./binary');
+  require('./bin');
   require('./base64');
+  require('./hex');
 })();

@@ -1,5 +1,5 @@
 const test = require('../lib/test');
-const { map, toBinary, fromBinary } = require('../lib/binary');
+const bin = require('../lib/bin');
 module.exports = (() => {
   test('toBinary', t => {
     // faceroll across US keyboard
@@ -25,7 +25,7 @@ module.exports = (() => {
     ];
     cases.forEach((string, idx) => {
       t.equals(
-        toBinary(string),
+        bin.toBinary(string),
         expected[idx],
         'Output of toBinary should match'
       );
@@ -37,7 +37,7 @@ module.exports = (() => {
     const expected = [0, 1, 2, 256];
     cases.forEach((binary, idx) => {
       t.equals(
-        fromBinary(binary),
+        bin.fromBinary(binary),
         expected[idx],
         'Output of fromBinary should match'
       );
@@ -63,7 +63,7 @@ module.exports = (() => {
       ]
     ];
     cases.forEach(([binary, radix, expected, description], idx) => {
-      const result = map(binary, radix, x => x);
+      const result = bin.map(binary, radix, x => x);
       t.ok(result.every((group, idx) => group === expected[idx]), description);
     });
   });
