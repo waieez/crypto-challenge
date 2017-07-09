@@ -1,0 +1,17 @@
+{
+  "name": "crypto-challenge",
+  "version": "0.0.1",
+  "description": "http://cryptopals.com/",
+  "main": "test.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node test/index.js"
+  },
+  "keywords": [
+    "crypto"
+  ],
+  "author": "elixian@gmail.com",
+  "license": "MIT"
+}
