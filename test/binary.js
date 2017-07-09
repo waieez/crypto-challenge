@@ -54,11 +54,11 @@ module.exports = (() => {
         ['0000', '1111'],
         'Should work when the length is divisible by the radix'
       ],
-      ['1', 2, ['10'], 'Should work when the radix greater than length'],
+      ['1', 2, ['1'], 'Should work when the radix greater than length'],
       [
         '0000001',
         6,
-        ['000000', '100000'],
+        ['000000', '1'],
         'Should work when the radix greater than length'
       ]
     ];
