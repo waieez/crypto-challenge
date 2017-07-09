@@ -1,7 +1,10 @@
 const test = require('../lib/test');
 const bin = require('../lib/bin');
+const logger = require('../lib/logger')();
+logger.level = 'error';
+
 module.exports = (() => {
-  test('toBinary', t => {
+  test('bin.toBinary', t => {
     // faceroll across US keyboard
     const cases = [
       '!@#$%^&*()_+',
@@ -32,7 +35,7 @@ module.exports = (() => {
     });
   });
 
-  test('fromBinary', t => {
+  test('bin.fromBinary', t => {
     const cases = ['0000', '0001', '0010', '100000000'];
     const expected = [0, 1, 2, 256];
     cases.forEach((binary, idx) => {
@@ -44,7 +47,7 @@ module.exports = (() => {
     });
   });
 
-  test('map', t => {
+  test('bin.map', t => {
     const cases = [
       // binary, radix, output, description
       ['1', 1, ['1'], 'Should work when the length is divisible by the radix'],

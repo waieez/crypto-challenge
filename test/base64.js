@@ -1,5 +1,8 @@
 const base64 = require('../lib/base64');
 const test = require('../lib/test');
+const logger = require('../lib/logger')();
+logger.level = 'error';
+
 module.exports = (() => {
   const cases = [
     // test cases from wiki
