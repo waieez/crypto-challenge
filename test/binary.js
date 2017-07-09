@@ -1,5 +1,5 @@
 const test = require('../lib/test');
-const toBinary = require('../lib/binary');
+const { map, toBinary, fromBinary } = require('../lib/binary');
 module.exports = (() => {
   test('toBinary', t => {
     // faceroll across US keyboard
@@ -29,6 +29,42 @@ module.exports = (() => {
         expected[idx],
         'Output of toBinary should match'
       );
+    });
+  });
+
+  test('fromBinary', t => {
+    const cases = ['0000', '0001', '0010', '100000000'];
+    const expected = [0, 1, 2, 256];
+    cases.forEach((binary, idx) => {
+      t.equals(
+        fromBinary(binary),
+        expected[idx],
+        'Output of fromBinary should match'
+      );
+    });
+  });
+
+  test('map', t => {
+    const cases = [
+      // binary, radix, output, description
+      ['1', 1, ['1'], 'Should work when the length is divisible by the radix'],
+      [
+        '00001111',
+        4,
+        ['0000', '1111'],
+        'Should work when the length is divisible by the radix'
+      ],
+      ['1', 2, ['10'], 'Should work when the radix greater than length'],
+      [
+        '0000001',
+        6,
+        ['000000', '100000'],
+        'Should work when the radix greater than length'
+      ]
+    ];
+    cases.forEach(([binary, radix, expected, description], idx) => {
+      const result = map(binary, radix, x => x);
+      t.ok(result.every((group, idx) => group === expected[idx]), description);
     });
   });
 })();
