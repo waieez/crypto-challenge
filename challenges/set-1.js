@@ -1,3 +1,4 @@
+const assert = require('../lib/assert');
 const base64 = require('../lib/base64');
 const bin = require('../lib/bin');
 const hex = require('../lib/hex');
@@ -38,31 +39,8 @@ module.exports = (() => {
     const hexString =
       '1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736';
 
-    let maxScore = 0;
-    let guess = -1;
-    let decoded = '';
-
-    // try every character
-    const values = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-      .split('')
-      .reduce((map, char) => {
-        map[char] = 1;
-        return map;
-      }, {});
-
     const string = hex.decode(hexString);
-    for (let cipher = 0; cipher < 256; cipher++) {
-      let result = utils.singleByteXor(string, bin.toBinary(cipher));
-      // NOTE: Scoring mechanism is primitive.
-      // Will need better solution to actually be useful.
-      let score = utils.analyse(result, values);
-      if (score > maxScore) {
-        maxScore = score;
-        guess = cipher;
-        decoded = result;
-        logger.debug('Updating guess: ', cipher, score, result);
-      }
-    }
+    const { maxScore, guess, decoded } = utils.detectSingleByteXor(string);
 
     t.ok(guess >= 0, 'Should guess some cipher');
     t.ok(decoded.length > 0, 'Should have some decoded string');
@@ -72,6 +50,38 @@ module.exports = (() => {
     logger.info('Cipher:', guess); // 88
     logger.info('Decoded string: ', decoded); // Cooking MC's like a pound of bacon
     logger.info('Score: ', maxScore); // 27
+    logger.level = 'error';
+  });
+
+  test('4 - Detect single-character XOR', t => {
+    const data = require('../data/single-char-xor');
+
+    let bestResult = {
+      string: '',
+      maxScore: 0,
+      guess: -1,
+      decoded: ''
+    };
+
+    logger.debug('type of data', assert.type(data, 'array', 'string'));
+    data.forEach(hexString => {
+      const string = hex.decode(hexString);
+      const result = utils.detectSingleByteXor(string);
+      if (result.maxScore > bestResult.maxScore) {
+        bestResult = result;
+        logger.debug('Updating bestResult', result);
+      }
+    });
+
+    const { string, guess, maxScore, decoded } = bestResult;
+    t.ok(guess >= 0, 'Should guess some cipher');
+    t.ok(decoded.length > 0, 'Should have some decoded string');
+
+    logger.level = 'info';
+    logger.info('Original string: ', string);
+    logger.info('Cipher:', guess);
+    logger.info('Decoded string: ', decoded); // nOWTHATTHEPARTYISJUMPING*
+    logger.info('Score: ', maxScore);
     logger.level = 'error';
   });
 })();
