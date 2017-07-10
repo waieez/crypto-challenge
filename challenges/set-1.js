@@ -1,9 +1,8 @@
-const assert = require('../lib/assert');
 const base64 = require('../lib/base64');
 const bin = require('../lib/bin');
 const hex = require('../lib/hex');
 const logger = require('../lib/logger')();
-const test = require('../lib/test');
+const { test, xtest } = require('../lib/test');
 const utils = require('../lib/utils');
 
 logger.level = 'error';
@@ -53,7 +52,7 @@ module.exports = (() => {
     logger.level = 'error';
   });
 
-  test('4 - Detect single-character XOR', t => {
+  xtest('4 - Detect single-character XOR', t => {
     const data = require('../data/single-char-xor');
 
     let bestResult = {
@@ -63,7 +62,6 @@ module.exports = (() => {
       decoded: ''
     };
 
-    logger.debug('type of data', assert.type(data, 'array', 'string'));
     data.forEach(hexString => {
       const string = hex.decode(hexString);
       const result = utils.detectSingleByteXor(string);

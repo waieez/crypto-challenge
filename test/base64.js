@@ -1,5 +1,5 @@
 const base64 = require('../lib/base64');
-const test = require('../lib/test');
+const { test, xtest } = require('../lib/test');
 const logger = require('../lib/logger')();
 logger.level = 'error';
 

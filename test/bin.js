@@ -1,4 +1,4 @@
-const test = require('../lib/test');
+const { test, xtest } = require('../lib/test');
 const bin = require('../lib/bin');
 const logger = require('../lib/logger')();
 logger.level = 'error';
