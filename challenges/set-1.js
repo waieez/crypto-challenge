@@ -3,6 +3,9 @@ const bin = require('../lib/bin');
 const hex = require('../lib/hex');
 const logger = require('../lib/logger')();
 const test = require('../lib/test');
+const utils = require('../lib/utils');
+
+logger.level = 'error';
 
 module.exports = (() => {
   test('1 - Convert Hex to Base64', t => {
@@ -29,5 +32,46 @@ module.exports = (() => {
     const string = hex.fromBinary(xord);
 
     t.equals(string, output, 'result of XOR + encode should match output');
+  });
+
+  test('3 - Single Byte XOR Cipher', t => {
+    const hexString =
+      '1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736';
+
+    let maxScore = 0;
+    let guess = -1;
+    let decoded = '';
+
+    // try every character
+    const values = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+      .split('')
+      .reduce((map, char) => {
+        map[char] = 1;
+        return map;
+      }, {});
+
+    const string = hex.decode(hexString);
+    for (let cipher = 0; cipher < 256; cipher++) {
+      let result = utils.singleByteXor(string, bin.toBinary(cipher));
+      // NOTE: Scoring mechanism is primitive.
+      // Will need better solution to actually be useful.
+      let score = utils.analyse(result, values);
+      if (score > maxScore) {
+        maxScore = score;
+        guess = cipher;
+        decoded = result;
+        logger.debug('Updating guess: ', cipher, score, result);
+      }
+    }
+
+    t.ok(guess >= 0, 'Should guess some cipher');
+    t.ok(decoded.length > 0, 'Should have some decoded string');
+
+    logger.level = 'info';
+    logger.info('Original string: ', hexString); // 1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736
+    logger.info('Cipher:', guess); // 88
+    logger.info('Decoded string: ', decoded); // Cooking MC's like a pound of bacon
+    logger.info('Score: ', maxScore); // 27
+    logger.level = 'error';
   });
 })();
