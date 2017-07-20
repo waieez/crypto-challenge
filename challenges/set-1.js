@@ -1,3 +1,4 @@
+const _ = require('../lib/underscore');
 const base64 = require('../lib/base64');
 const bin = require('../lib/bin');
 const hex = require('../lib/hex');
@@ -102,5 +103,22 @@ module.exports = (() => {
 
     const decrypted = utils.repeatingKeyXor(encrypted, key);
     t.equals(decrypted, originalString, 'Should be able to decrypt a string using the key');
+  });
+
+  test('Break repeating key XOR', t => {
+    const distance = utils.hammingDistance('this is a test', 'wokka wokka!!!');
+    t.equals(distance, 37, 'Should be able to compute the hamming distance of two strings');
+
+    const original = "Cooking MC's like a pound of bacon";
+    const string = utils.repeatingKeyXor(original, 'X');
+    const key = utils.findRepeatingXORKey(string, 3);
+    const decoded = utils.repeatingKeyXor(string, key);
+    t.equals(original, decoded, 'Should be able to break repeating key XOR with constraints');
+
+    logger.level = 'info';
+    logger.info('Original string:', original);
+    logger.info('Gussed Key:', key);
+    logger.info('Decoded:', decoded);
+    logger.level = 'error';
   });
 })();
