@@ -38,7 +38,7 @@ module.exports = (() => {
     const hexString = '1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736';
 
     const string = hex.decode(hexString);
-    const { maxScore, guess, decoded } = utils.detectSingleByteXor(string);
+    const { bestScore, guess, decoded } = utils.detectSingleByteXor(string);
 
     t.ok(guess >= 0, 'Should guess some cipher');
     t.ok(decoded.length > 0, 'Should have some decoded string');
@@ -47,16 +47,17 @@ module.exports = (() => {
     logger.info('Original string: ', hexString); // 1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736
     logger.info('Cipher:', guess); // 88
     logger.info('Decoded string: ', decoded); // Cooking MC's like a pound of bacon
-    logger.info('Score: ', maxScore); // 27
+    logger.info('Score: ', bestScore); // ~20 (lower is better)
     logger.level = 'error';
   });
 
   xtest('4 - Detect single-character XOR', t => {
     const data = require('../data/single-char-xor');
+    const decrypted = 'Now that the party is jumping';
 
     let bestResult = {
       string: '',
-      maxScore: 0,
+      bestScore: Infinity,
       guess: -1,
       decoded: ''
     };
@@ -64,21 +65,22 @@ module.exports = (() => {
     data.forEach(hexString => {
       const string = hex.decode(hexString);
       const result = utils.detectSingleByteXor(string);
-      if (result.maxScore > bestResult.maxScore) {
+      if (result.bestScore < bestResult.bestScore) {
         bestResult = result;
-        logger.debug('Updating bestResult', result);
+        logger.info('Updating bestResult', result);
       }
     });
 
-    const { string, guess, maxScore, decoded } = bestResult;
+    const { string, guess, bestScore, decoded } = bestResult;
     t.ok(guess >= 0, 'Should guess some cipher');
     t.ok(decoded.length > 0, 'Should have some decoded string');
+    t.equals(decoded, decrypted, 'Should be able to detect single-char XOR');
 
     logger.level = 'info';
-    logger.info('Original string: ', string);
-    logger.info('Cipher:', guess);
-    logger.info('Decoded string: ', decoded); // nOWTHATTHEPARTYISJUMPING*
-    logger.info('Score: ', maxScore);
+    logger.info('Original string: ', string); // äZBAÅTAAÅPETGALöF_@XEöÄR?
+    logger.info('Cipher:', guess); // 53
+    logger.info('Decoded string: ', decoded); // Now that the party is jumping
+    logger.info('Score: ', bestScore); // 21.36
     logger.level = 'error';
   });
 
@@ -88,7 +90,6 @@ module.exports = (() => {
 
     const key = 'ICE';
 
-    logger.level = 'info';
     const encrypted = utils.repeatingKeyXor(originalString, key);
     // TODO: figure out what's different between expected output and my output.
     // For now just compare base64 ecoded string
