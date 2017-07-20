@@ -27,11 +27,7 @@ module.exports = (() => {
       '01011010010110000100001101010110010000100100111001001101001111000011111000111111'
     ];
     cases.forEach((string, idx) => {
-      t.equals(
-        bin.toBinary(string),
-        expected[idx],
-        'Output of toBinary should match'
-      );
+      t.equals(bin.toBinary(string), expected[idx], 'Output of toBinary should match');
     });
   });
 
@@ -39,11 +35,7 @@ module.exports = (() => {
     const cases = ['0000', '0001', '0010', '100000000'];
     const expected = [0, 1, 2, 256];
     cases.forEach((binary, idx) => {
-      t.equals(
-        bin.fromBinary(binary),
-        expected[idx],
-        'Output of fromBinary should match'
-      );
+      t.equals(bin.fromBinary(binary), expected[idx], 'Output of fromBinary should match');
     });
   });
 
@@ -51,19 +43,9 @@ module.exports = (() => {
     const cases = [
       // binary, radix, output, description
       ['1', 1, ['1'], 'Should work when the length is divisible by the radix'],
-      [
-        '00001111',
-        4,
-        ['0000', '1111'],
-        'Should work when the length is divisible by the radix'
-      ],
+      ['00001111', 4, ['0000', '1111'], 'Should work when the length is divisible by the radix'],
       ['1', 2, ['1'], 'Should work when the radix greater than length'],
-      [
-        '0000001',
-        6,
-        ['000000', '1'],
-        'Should work when the radix greater than length'
-      ]
+      ['0000001', 6, ['000000', '1'], 'Should work when the radix greater than length']
     ];
     cases.forEach(([binary, radix, expected, description], idx) => {
       const result = bin.map(binary, radix, x => x);
@@ -73,12 +55,7 @@ module.exports = (() => {
 
   test('bin.bitwise + bin.xor', t => {
     const cases = [
-      [
-        '1',
-        '0',
-        '1',
-        'Bitwise should work on binary strings shorter than 32 bits'
-      ],
+      ['1', '0', '1', 'Bitwise should work on binary strings shorter than 32 bits'],
       [
         // length 40
         '1111111111111111111111111111111111111111',
