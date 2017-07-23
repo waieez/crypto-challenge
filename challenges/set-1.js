@@ -4,7 +4,7 @@ const bin = require('../lib/bin');
 const hex = require('../lib/hex');
 const logger = require('../lib/logger')();
 const { test, xtest } = require('../lib/test');
-const utils = require('../lib/utils');
+const crypto = require('../lib/crypto');
 
 logger.level = 'error';
 
@@ -38,7 +38,7 @@ module.exports = (() => {
     const hexString = '1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736';
 
     const string = hex.decode(hexString);
-    const { bestScore, guess, decoded } = utils.detectSingleByteXor(string);
+    const { bestScore, guess, decoded } = crypto.detectSingleByteXor(string);
 
     t.ok(guess >= 0, 'Should guess some cipher');
     t.ok(decoded.length > 0, 'Should have some decoded string');
@@ -64,7 +64,7 @@ module.exports = (() => {
 
     data.forEach(hexString => {
       const string = hex.decode(hexString);
-      const result = utils.detectSingleByteXor(string);
+      const result = crypto.detectSingleByteXor(string);
       if (result.bestScore < bestResult.bestScore) {
         bestResult = result;
         logger.info('Updating bestResult', result);
@@ -90,7 +90,7 @@ module.exports = (() => {
 
     const key = 'ICE';
 
-    const encrypted = utils.repeatingKeyXor(originalString, key);
+    const encrypted = crypto.repeatingKeyXor(originalString, key);
     // TODO: figure out what's different between expected output and my output.
     // For now just compare base64 ecoded string
     // const output = a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f
@@ -102,18 +102,18 @@ module.exports = (() => {
       'Should be able to encrypt a string with repeating key XOR'
     );
 
-    const decrypted = utils.repeatingKeyXor(encrypted, key);
+    const decrypted = crypto.repeatingKeyXor(encrypted, key);
     t.equals(decrypted, originalString, 'Should be able to decrypt a string using the key');
   });
 
-  xtest('Break repeating key XOR - Quick Sanity Test', t => {
-    const distance = utils.hammingDistance('this is a test', 'wokka wokka!!!');
+  test('Break repeating key XOR - Quick Sanity Test', t => {
+    const distance = crypto.hammingDistance('this is a test', 'wokka wokka!!!');
     t.equals(distance, 37, 'Should be able to compute the hamming distance of two strings');
 
     const original = "Cooking MC's like a pound of bacon";
-    const string = utils.repeatingKeyXor(original, 'X');
-    const key = utils.findRepeatingXORKey(string, 3);
-    const decoded = utils.repeatingKeyXor(string, key);
+    const string = crypto.repeatingKeyXor(original, 'X');
+    const key = crypto.findRepeatingXORKey(string, 3);
+    const decoded = crypto.repeatingKeyXor(string, key);
     t.equals(original, decoded, 'Should be able to break repeating key XOR with constraints');
 
     logger.level = 'info';
@@ -127,10 +127,8 @@ module.exports = (() => {
     const data = require('../data/repeating-key-xor');
     const decoded = base64.decode(data);
 
-    logger.level = 'debug';
-    const key = utils.findRepeatingXORKey(decoded, 20);
-    logger.level = 'error';
-    const decrypted = utils.repeatingKeyXor(decoded, key);
+    const key = crypto.findRepeatingXORKey(decoded, 20);
+    const decrypted = crypto.repeatingKeyXor(decoded, key);
 
     logger.level = 'info';
     logger.info('Gussed Key:', key);
