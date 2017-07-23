@@ -106,7 +106,7 @@ module.exports = (() => {
     t.equals(decrypted, originalString, 'Should be able to decrypt a string using the key');
   });
 
-  test('Break repeating key XOR', t => {
+  xtest('Break repeating key XOR - Quick Sanity Test', t => {
     const distance = utils.hammingDistance('this is a test', 'wokka wokka!!!');
     t.equals(distance, 37, 'Should be able to compute the hamming distance of two strings');
 
@@ -120,6 +120,21 @@ module.exports = (() => {
     logger.info('Original string:', original);
     logger.info('Gussed Key:', key);
     logger.info('Decoded:', decoded);
+    logger.level = 'error';
+  });
+
+  xtest('Break repeating key XOR', t => {
+    const data = require('../data/repeating-key-xor');
+    const decoded = base64.decode(data);
+
+    logger.level = 'debug';
+    const key = utils.findRepeatingXORKey(decoded, 20);
+    logger.level = 'error';
+    const decrypted = utils.repeatingKeyXor(decoded, key);
+
+    logger.level = 'info';
+    logger.info('Gussed Key:', key);
+    logger.info('Decrypted:', decrypted);
     logger.level = 'error';
   });
 })();
