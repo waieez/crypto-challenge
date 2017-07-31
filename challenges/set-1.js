@@ -1,4 +1,4 @@
-const _ = require('../lib/underscore');
+const _ = require('../lib/utils');
 const base64 = require('../lib/base64');
 const bin = require('../lib/bin');
 const hex = require('../lib/hex');
