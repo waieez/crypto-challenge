@@ -19,6 +19,22 @@ module.exports = (() => {
     );
   });
 
+  test('bin.map', t => {
+    const cases = [[15], [255], [255, 255], [255, 255, 255]].map(array => bin.fromArray(array));
+    const radix = [4, 4, 4, 6];
+    const expected = [[0, 15], [15, 15], [15, 15, 15, 15], [63, 63, 63, 63]].map(array =>
+      bin.fromArray(array)
+    );
+    t.ok(
+      cases.every((buffer, idx) => {
+        const remapped = new Uint8Array(bin.map(buffer, radix[idx])).toString();
+        const result = new Uint8Array(expected[idx]).toString();
+        return remapped === result;
+      }),
+      'Should be able to remap a buffer to any arbitrary radix'
+    );
+  });
+
   test('bin.toBinary', t => {
     // faceroll across US keyboard
     const cases = [
