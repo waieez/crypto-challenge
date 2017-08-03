@@ -77,7 +77,7 @@ module.exports = (() => {
     t.equals(decoded, decrypted, 'Should be able to detect single-char XOR');
 
     logger.level = 'info';
-    logger.info('Original string: ', string); // äZBAÅTAAÅPETGALöF_@XEöÄR?
+    logger.info('Original string: ', string); // {ZBA]TAA]PETGAL\F_@XE\[R?
     logger.info('Cipher:', guess); // 53
     logger.info('Decoded string: ', decoded); // Now that the party is jumping
     logger.info('Score: ', bestScore); // 21.36
@@ -89,13 +89,13 @@ module.exports = (() => {
       "Burning 'em, if you ain't quick and nimble I go crazy when I hear a cymbal";
 
     const key = 'ICE';
-
     const encrypted = crypto.repeatingKeyXor(originalString, key);
     // TODO: figure out what's different between expected output and my output.
     // For now just compare base64 ecoded string
-    // const output = a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f
+    // const output = 'a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f';
     const output =
       'CzY3JyorLmNiLC5paSojaToqPGMkIC1iPWM0PComImMkJydlJyooKy8gaQplLixlKjEkMzplPisgJ2MMaSsgKDFlKGMmMC4nKC8=';
+    t.notEquals(encrypted, originalString, 'The string should be encrypted');
     t.equals(
       base64.encode(encrypted),
       output,
